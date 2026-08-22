@@ -26,10 +26,12 @@
         <p class="dek">Reassign down. Tip the office sideways. Help six misplaced objects reach a destination they were never designed for.</p>
         <a href="#laboratory">ENTER THE ORIENTATION LAB <span>↘</span></a>
       </div>
-      <figure class="hero-specimen" aria-label="A small moon ignoring conventional gravity">
-        <img src="assets/objects/small-moon.webp" alt="A glossy chrome moon with cobalt craters and a fluorescent orbit">
-        <figcaption><span>SPECIMEN 03</span><b>SMALL MOON / UNCOOPERATIVE</b><small>ORIENTATION STATUS: PERSONAL</small></figcaption>
-      </figure>
+      <div class="hero-specimen-cluster" aria-label="Three objects ignoring conventional gravity">
+        <img class="hero-moon" src="assets/objects/small-moon.webp" alt="A glossy chrome moon with cobalt craters">
+        <img class="hero-key" src="assets/objects/lost-key.webp" alt="A looping chrome key">
+        <img class="hero-clip" src="assets/objects/paper-clip.webp" alt="An impossible chrome paper clip">
+        <span class="hero-index index-a">03 / ORBITAL MISFILE</span><span class="hero-index index-b">01 / KEY TO UP</span><b class="hero-coordinate">X—14<br>Y—?</b>
+      </div>
       <div class="hero-note">NOTICE<br>Objects may develop<br>their own opinions.</div>
     </section>
 
@@ -93,14 +95,14 @@
     <section class="rule-cabinet">
       <header><span>03 / THE RULE CABINET</span><h2>Approved alternatives<br>to <i>falling normally.</i></h2><p>Choose a stored policy. The orientation field will obey without asking whether it makes sense.</p></header>
       <div class="rule-demonstrator" id="ruleDemonstrator">
-        <div class="rule-test-copy"><span>LIVE CABINET TEST</span><h3 id="cabinetRuleName">Standard Down / Unpopular</h3><p id="cabinetRuleMessage">The floor has been notified.</p><button id="viewAppliedRule" type="button">VIEW THIS RULE IN THE LAB ↗</button></div>
-        <div class="rule-test-field" aria-live="polite"><span id="cabinetVector">↓</span><img id="cabinetSpecimen" src="assets/objects/one-idea.webp" alt="A luminous specimen responding to the selected gravity rule"><small>SELECT A POLICY BELOW TO TEST IT HERE</small></div>
+        <div class="rule-test-copy"><span>ACTIVE POLICY / CLICK AN ALTERNATIVE BELOW</span><h3 id="cabinetRuleName">Standard Down / Unpopular</h3><p id="cabinetRuleMessage">The floor has been notified.</p><button id="viewAppliedRule" type="button">SEND TO THE MAIN FIELD ↗</button></div>
+        <div class="rule-word-field" aria-live="polite"><span id="cabinetVector">↓</span><div id="fallingPhrase"><b>THIS</b><b>WAY</b><b>IS</b><b>DOWN</b></div><small>LIVE TYPOGRAPHIC GRAVITY TEST</small></div>
       </div>
       <div id="ruleCards"></div>
     </section>
   </main>
 
   <footer class="site-foot"><span>GRAVITY IS OPTIONAL</span><span>RULE ENGINE / SQL</span><a href="https://github.com/jean-tmk/gravity-is-optional">VIEW SOURCE ↗</a></footer>
-  <script src="gravity.js?v=4"></script>
+  <script src="gravity.js?v=5"></script>
 </body>
 </html>
