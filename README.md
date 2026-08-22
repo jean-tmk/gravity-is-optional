@@ -28,3 +28,27 @@ python3 -c "import sqlite3,pathlib; db=sqlite3.connect(':memory:'); db.executesc
 ```
 
 Every value should be `1`.
+
+## Polyglot field office
+
+SQL remains the governing language and source of truth. Thirteen small, working
+adapters test how the same gravity policy behaves across languages that had not
+previously appeared in the Wonder Room collection:
+
+- C integrates the scalar vector field;
+- PHP exports policy manifests;
+- PowerShell validates the SQLite schema;
+- Solidity records policy approvals;
+- CUDA advances object fields in parallel;
+- Fortran solves orbital energy;
+- Ada enforces policy ranges;
+- COBOL prints the official gravity report;
+- Prolog infers allowed transitions;
+- D audits collisions;
+- Groovy defines missions as a DSL;
+- Objective-C bridges device orientation; and
+- Pascal provides a portable policy validator.
+
+`sql/gravity_audit.sql` registers and audits all thirteen implementations while
+adding field measurements, transition analytics, anomaly detection, and
+cross-language conformance views.

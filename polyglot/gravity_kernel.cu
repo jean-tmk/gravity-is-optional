@@ -1,0 +1,4 @@
+#include <cuda_runtime.h>
+struct FieldBody { float2 position; float2 velocity; float mass; float drag; };
+__global__ void apply_gravity_field(FieldBody *bodies,int count,float2 gravity,float seconds){const int index=blockIdx.x*blockDim.x+threadIdx.x;if(index>=count||bodies[index].mass<=0.0f)return;FieldBody body=bodies[index];body.velocity.x=(body.velocity.x+gravity.x*seconds)*body.drag;body.velocity.y=(body.velocity.y+gravity.y*seconds)*body.drag;body.position.x+=body.velocity.x*seconds;body.position.y+=body.velocity.y*seconds;bodies[index]=body;}
+extern "C" cudaError_t gravity_step(FieldBody *deviceBodies,int count,float2 gravity,float seconds){if(!deviceBodies||count<=0||seconds<=0.0f)return cudaErrorInvalidValue;const int threads=128;apply_gravity_field<<<(count+threads-1)/threads,threads>>>(deviceBodies,count,gravity,seconds);return cudaGetLastError();}
