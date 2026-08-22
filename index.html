@@ -26,11 +26,10 @@
         <p class="dek">Reassign down. Tip the office sideways. Help six misplaced objects reach a destination they were never designed for.</p>
         <a href="#laboratory">ENTER THE ORIENTATION LAB <span>↘</span></a>
       </div>
-      <div class="hero-orbit" aria-hidden="true">
-        <span class="orbit-label one">MASS / MAYBE</span>
-        <span class="orbit-label two">UP / PENDING</span>
-        <b>↓</b><i>↑</i><em>?</em>
-      </div>
+      <figure class="hero-specimen" aria-label="A small moon ignoring conventional gravity">
+        <img src="assets/objects/small-moon.webp" alt="A glossy chrome moon with cobalt craters and a fluorescent orbit">
+        <figcaption><span>SPECIMEN 03</span><b>SMALL MOON / UNCOOPERATIVE</b><small>ORIENTATION STATUS: PERSONAL</small></figcaption>
+      </figure>
       <div class="hero-note">NOTICE<br>Objects may develop<br>their own opinions.</div>
     </section>
 
@@ -93,11 +92,15 @@
 
     <section class="rule-cabinet">
       <header><span>03 / THE RULE CABINET</span><h2>Approved alternatives<br>to <i>falling normally.</i></h2><p>Choose a stored policy. The orientation field will obey without asking whether it makes sense.</p></header>
+      <div class="rule-demonstrator" id="ruleDemonstrator">
+        <div class="rule-test-copy"><span>LIVE CABINET TEST</span><h3 id="cabinetRuleName">Standard Down / Unpopular</h3><p id="cabinetRuleMessage">The floor has been notified.</p><button id="viewAppliedRule" type="button">VIEW THIS RULE IN THE LAB ↗</button></div>
+        <div class="rule-test-field" aria-live="polite"><span id="cabinetVector">↓</span><img id="cabinetSpecimen" src="assets/objects/one-idea.webp" alt="A luminous specimen responding to the selected gravity rule"><small>SELECT A POLICY BELOW TO TEST IT HERE</small></div>
+      </div>
       <div id="ruleCards"></div>
     </section>
   </main>
 
   <footer class="site-foot"><span>GRAVITY IS OPTIONAL</span><span>RULE ENGINE / SQL</span><a href="https://github.com/jean-tmk/gravity-is-optional">VIEW SOURCE ↗</a></footer>
-  <script src="gravity.js?v=3"></script>
+  <script src="gravity.js?v=4"></script>
 </body>
 </html>
