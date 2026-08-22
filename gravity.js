@@ -11,14 +11,18 @@ const SQL_RULES=[
   {id:6,slug:"microgravity",name:"Zero-G Filing Hour",angle:90,strength:0,glyph:"0G",color:"#8ce2c4",message:"DOWN HAS LEFT AN OUT-OF-OFFICE REPLY.",sql:"DELETE FROM gravity WHERE certainty = 'unnecessary';"}
 ];
 
-const OBJECT_SETS=[
-  [{label:"LOST KEY",mass:1.2,color:"#d9ff45"},{label:"MONDAY",mass:2.4,color:"#ff6257"},{label:"SMALL MOON",mass:3.2,color:"#62c8ff"},{label:"PAPER CLIP",mass:.7,color:"#b8a1ff"},{label:"ONE IDEA",mass:1.5,color:"#ffd0a8"},{label:"LUNCH",mass:2.1,color:"#8ce2c4"}],
-  [{label:"UNSENT NOTE",mass:.8,color:"#ff6257"},{label:"SPARE HOUR",mass:1.7,color:"#62c8ff"},{label:"TINY PLANET",mass:3.6,color:"#d9ff45"},{label:"OFFICE PLANT",mass:2.8,color:"#8ce2c4"},{label:"MAYBE",mass:1.1,color:"#b8a1ff"},{label:"RECEIPT",mass:.6,color:"#ffd0a8"}],
-  [{label:"BLUE TUESDAY",mass:2.2,color:"#62c8ff"},{label:"DOOR 04",mass:3.1,color:"#d9ff45"},{label:"QUIET NOISE",mass:1.3,color:"#b8a1ff"},{label:"FUTURE SOCK",mass:.9,color:"#ff6257"},{label:"HALF A MAP",mass:1.8,color:"#ffd0a8"},{label:"LAST EMAIL",mass:2.5,color:"#8ce2c4"}]
+const OBJECTS=[
+  {label:"LOST KEY",mass:1.2,color:"#d9ff45",image:"assets/objects/lost-key.webp"},
+  {label:"MONDAY",mass:2.4,color:"#ff6257",image:"assets/objects/monday.webp"},
+  {label:"SMALL MOON",mass:3.2,color:"#62c8ff",image:"assets/objects/small-moon.webp"},
+  {label:"PAPER CLIP",mass:.7,color:"#b8a1ff",image:"assets/objects/paper-clip.webp"},
+  {label:"ONE IDEA",mass:1.5,color:"#ffd0a8",image:"assets/objects/one-idea.webp"},
+  {label:"LUNCH",mass:2.1,color:"#8ce2c4",image:"assets/objects/lunch.webp"}
 ];
+const OBJECT_IMAGES=new Map(OBJECTS.map(object=>{const image=new Image();image.decoding="async";image.src=object.image;return [object.image,image]}));
 
 const canvas=$("#gravityCanvas"),ctx=canvas.getContext("2d"),windowEl=$("#physicsWindow");
-const state={angle:90,strength:62,paused:false,sound:true,objects:[],drag:null,docked:new Set(),set:0,mission:"dock",orbitTime:0,rainScore:0,last:performance.now()};
+const state={angle:90,strength:62,paused:false,sound:true,objects:[],drag:null,docked:new Set(),mission:"dock",orbitTime:0,rainScore:0,last:performance.now()};
 let audio;
 
 function playTone(frequency=220,duration=.12,type="triangle",volume=.055){
@@ -33,13 +37,13 @@ function playTone(frequency=220,duration=.12,type="triangle",volume=.055){
 function chord(notes){notes.forEach((note,index)=>setTimeout(()=>playTone(note,.13,"triangle",.04),index*55))}
 
 function resize(){const box=windowEl.getBoundingClientRect(),scale=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(box.width*scale);canvas.height=Math.round(box.height*scale);canvas.style.width=box.width+"px";canvas.style.height=box.height+"px";ctx.setTransform(scale,0,0,scale,0,0);state.width=box.width;state.height=box.height;if(!state.objects.length)resetObjects()}
-function resetObjects(){const templates=OBJECT_SETS[state.set%OBJECT_SETS.length];state.docked.clear();state.objects=templates.map((item,index)=>({ ...item,x:80+(index%3)*145,y:125+Math.floor(index/3)*125,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,w:112,h:60,rotation:(Math.random()-.5)*.08,spin:(Math.random()-.5)*.002,docked:false}));updateMission()}
+function resetObjects(){state.docked.clear();state.objects=OBJECTS.map((item,index)=>({ ...item,asset:OBJECT_IMAGES.get(item.image),x:80+(index%3)*145+(Math.random()-.5)*26,y:125+Math.floor(index/3)*125+(Math.random()-.5)*24,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,w:86,h:86,rotation:(Math.random()-.5)*.15,spin:(Math.random()-.5)*.002,docked:false}));updateMission()}
 function directionVector(){const radians=state.angle*Math.PI/180;return {x:-Math.cos(radians),y:Math.sin(radians)}}
 function dockBounds(){return {x:state.width*.71,y:state.height*.79,w:state.width*.25,h:state.height*.17}}
 
 function roundedRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
 function drawGrid(){ctx.save();ctx.strokeStyle="rgba(255,255,255,.075)";ctx.lineWidth=1;for(let x=0;x<state.width;x+=38){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,state.height);ctx.stroke()}for(let y=0;y<state.height;y+=38){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(state.width,y);ctx.stroke()}ctx.restore()}
-function drawObject(object,index){ctx.save();ctx.translate(object.x,object.y);ctx.rotate(object.rotation);ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=0;ctx.shadowOffsetX=7;ctx.shadowOffsetY=8;ctx.fillStyle=object.docked?"#f7f0df":object.color;ctx.strokeStyle="#24164f";ctx.lineWidth=2;roundedRect(-object.w/2,-object.h/2,object.w,object.h,8);ctx.fill();ctx.stroke();ctx.shadowColor="transparent";ctx.fillStyle="#24164f";ctx.font="500 8px 'DM Mono'";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(object.label,0,-4);ctx.font="500 6px 'DM Mono'";ctx.fillText(`MASS / ${object.mass.toFixed(1)}`,0,12);ctx.restore()}
+function drawObject(object,index){ctx.save();ctx.translate(object.x,object.y);ctx.rotate(object.rotation);ctx.shadowColor="rgba(7,3,25,.5)";ctx.shadowBlur=14;ctx.shadowOffsetX=5;ctx.shadowOffsetY=7;if(object.asset?.complete&&object.asset.naturalWidth){const ratio=Math.min(object.w/object.asset.naturalWidth,object.h/object.asset.naturalHeight);const width=object.asset.naturalWidth*ratio,height=object.asset.naturalHeight*ratio;ctx.drawImage(object.asset,-width/2,-height/2-7,width,height)}else{ctx.fillStyle=object.color;ctx.beginPath();ctx.arc(0,-7,object.w*.28,0,Math.PI*2);ctx.fill()}ctx.shadowColor="transparent";ctx.rotate(-object.rotation);ctx.fillStyle="rgba(247,240,223,.94)";ctx.strokeStyle=object.color;ctx.lineWidth=1;roundedRect(-40,object.h/2-13,80,19,9);ctx.fill();ctx.stroke();ctx.fillStyle="#24164f";ctx.font="500 6.5px 'DM Mono'";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(`${object.label} / ${object.mass.toFixed(1)}`,0,object.h/2-3);ctx.restore()}
 function drawOrbit(){if(state.mission!=="orbit")return;ctx.save();ctx.translate(state.width*.5,state.height*.48);ctx.strokeStyle="rgba(217,255,69,.5)";ctx.setLineDash([5,9]);ctx.beginPath();ctx.ellipse(0,0,170,105,state.orbitTime*.00008,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#d9ff45";ctx.font="500 7px 'DM Mono'";ctx.fillText("MAINTAIN ORBIT / 12 SEC",-70,-122);ctx.restore()}
 function drawRain(){if(state.mission!=="rain")return;ctx.save();ctx.strokeStyle="rgba(98,200,255,.7)";for(let i=0;i<28;i++){const x=(i*83+state.orbitTime*.16)%Math.max(1,state.width+150)-100,y=(i*47)%state.height;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+26,y+3);ctx.stroke()}ctx.restore()}
 
@@ -56,7 +60,7 @@ function physics(delta){
     if(object.x>state.width-halfW){object.x=state.width-halfW;object.vx=-Math.abs(object.vx)*.72;object.spin+=(Math.random()-.5)*.003;playCollision(object)}
     if(object.y<halfH){object.y=halfH;object.vy=Math.abs(object.vy)*.72;playCollision(object)}
     if(object.y>state.height-halfH){object.y=state.height-halfH;object.vy=-Math.abs(object.vy)*.72;playCollision(object)}
-    if(object.x>dock.x&&object.x<dock.x+dock.w&&object.y>dock.y&&object.y<dock.y+dock.h){object.docked=true;object.vx=object.vy=0;object.x=dock.x+28+(state.docked.size%3)*42;object.y=dock.y+35+Math.floor(state.docked.size/3)*42;object.w=66;object.h=31;state.docked.add(index);chord([330,440,550]);updateMission()}
+    if(object.x>dock.x&&object.x<dock.x+dock.w&&object.y>dock.y&&object.y<dock.y+dock.h){object.docked=true;object.vx=object.vy=0;object.x=dock.x+28+(state.docked.size%3)*42;object.y=dock.y+34+Math.floor(state.docked.size/3)*42;object.w=42;object.h=42;state.docked.add(index);chord([330,440,550]);updateMission()}
   });
   if(state.mission==="orbit")state.strength<23?state.orbitTime+=delta:state.orbitTime=0;
   if(state.mission==="rain")(state.angle<12||state.angle>348)?state.rainScore=Math.min(100,state.rainScore+delta*.008):state.rainScore=0;
@@ -78,7 +82,7 @@ const MISSIONS={
   orbit:{kicker:"ASSIGNMENT 02 / ADMINISTRATIVE ORBIT",title:"Keep the office in microgravity for twelve seconds.",copy:"Reduce the field below 23%. The filing system would like to experience one complete, uninterrupted orbit."},
   rain:{kicker:"ASSIGNMENT 03 / SIDEWAYS WEATHER",title:"Make the rain fall completely sideways.",copy:"Point gravity due east and maintain the contradiction until the weather office gives up."}
 };
-function updateMission(){let value=0,label="",status="INCOMPLETE / PROMISING";if(state.mission==="dock"){value=state.docked.size/6*100;label=`${state.docked.size} OF 6 DOCKED`;if(state.docked.size===6)status="COMPLETE / PHYSICS IMPRESSED"}if(state.mission==="orbit"){value=Math.min(100,state.orbitTime/12000*100);label=`${Math.floor(state.orbitTime/1000)} OF 12 SECONDS`;if(value>=100)status="COMPLETE / ORBIT FILED"}if(state.mission==="rain"){value=state.rainScore;label=`${Math.floor(value)}% SIDEWAYS`;if(value>=100)status="COMPLETE / FORECAST DENIED"}$("#missionProgressLabel").textContent=label;$("#missionProgressBar").style.width=value+"%";$("#missionStatus").textContent=status;if(value>=100&&!state.completed){state.completed=true;chord([330,440,550,660])}}
+function updateMission(){let value=0,label="",status="INCOMPLETE / PROMISING";$("#dockReadout").textContent=`${state.docked.size}/6`;if(state.mission==="dock"){value=state.docked.size/6*100;label=`${state.docked.size} OF 6 DOCKED`;if(state.docked.size===6)status="COMPLETE / PHYSICS IMPRESSED"}if(state.mission==="orbit"){value=Math.min(100,state.orbitTime/12000*100);label=`${Math.floor(state.orbitTime/1000)} OF 12 SECONDS`;if(value>=100)status="COMPLETE / ORBIT FILED"}if(state.mission==="rain"){value=state.rainScore;label=`${Math.floor(value)}% SIDEWAYS`;if(value>=100)status="COMPLETE / FORECAST DENIED"}$("#missionProgressLabel").textContent=label;$("#missionProgressBar").style.width=value+"%";$("#missionStatus").textContent=status;if(value>=100&&!state.completed){state.completed=true;chord([330,440,550,660])}}
 function setMission(name){state.mission=name;state.completed=false;state.orbitTime=0;state.rainScore=0;const mission=MISSIONS[name];$("#missionKicker").textContent=mission.kicker;$("#missionTitle").textContent=mission.title;$("#missionCopy").textContent=mission.copy;$$('[data-mission]').forEach(button=>button.setAttribute("aria-selected",String(button.dataset.mission===name)));updateMission();playTone(280,.15)}
 
 $$('[data-direction]').forEach(button=>button.onclick=()=>setDirection(Number(button.dataset.direction)));
@@ -86,7 +90,7 @@ $("#microgravity").onclick=()=>applyRule(SQL_RULES.find(rule=>rule.slug==="micro
 $("#force").oninput=event=>{state.strength=Number(event.target.value);$("#forceOutput").textContent=state.strength+"%";$("#forceReadout").textContent=state.strength+"%";$("#ruleName").textContent="CUSTOM FIELD / UNVERIFIED";$("#ruleSql").textContent=`UPDATE gravity_rules SET strength = ${state.strength} WHERE active = 1;`};
 $("#gust").onclick=()=>{state.objects.forEach(object=>{if(!object.docked){object.vx+=(Math.random()-.5)*.7;object.vy+=(Math.random()-.5)*.7;object.spin+=(Math.random()-.5)*.006}});$("#fieldMessage").textContent="A SMALL BUT DETERMINED GUST HAS BEEN RELEASED.";chord([110,160,210])};
 $("#freeze").onclick=event=>{state.paused=!state.paused;event.currentTarget.querySelector("b").textContent=state.paused?"UNFREEZE THE FIELD":"FREEZE THE FIELD";$("#fieldMessage").textContent=state.paused?"PHYSICS PAUSED / TAKE YOUR TIME.":"PHYSICS HAS RELUCTANTLY RESUMED.";playTone(state.paused?120:320,.18,"square")};
-$("#shuffle").onclick=()=>{state.set=(state.set+1)%OBJECT_SETS.length;resetObjects();$("#fieldMessage").textContent="THE LOST-AND-FOUND HAS ISSUED SIX NEW PROBLEMS.";chord([260,310,370])};
+$("#shuffle").onclick=()=>{resetObjects();$("#fieldMessage").textContent="THE SAME SIX SPECIMENS HAVE BEEN FILED INCORRECTLY AGAIN.";chord([260,310,370])};
 $("#fieldReset").onclick=()=>{resetObjects();playTone(180,.22,"sawtooth")};
 $$('[data-mission]').forEach(button=>button.onclick=()=>setMission(button.dataset.mission));
 $("#soundToggle").onclick=event=>{state.sound=!state.sound;event.currentTarget.textContent=state.sound?"SOUND / ON":"SOUND / OFF";event.currentTarget.setAttribute("aria-pressed",String(state.sound));if(state.sound)chord([220,330,440])};
